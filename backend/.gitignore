@@ -1,0 +1,11 @@
+# Ignore environment variables
+.env
+
+# Ignore logs
+logs
+
+# Ignore db dump
+dump.sql
+
+# Ignore node_modules
+node_modules

@@ -1,0 +1,40 @@
+services:
+  db:
+    image: mysql:8
+    container_name: mysql_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: blog
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/dump.sql
+
+  backend:
+    build: .
+    container_name: backend
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DB_HOST: mysql_container
+      DB_USER: user
+      DB_PASS: password
+      DB_NAME: blog
+      JWT_SECRET: your_jwt_secret
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    command: ["node", "index.js"]
+
+volumes:
+  mysql_data:
